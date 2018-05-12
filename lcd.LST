@@ -1,0 +1,210 @@
+C51 COMPILER V9.01   LCD                                                                   05/11/2018 23:51:21 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN lcd.OBJ
+COMPILER INVOKED BY: D:\stc51\keil\C51\BIN\C51.EXE lcd.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <lcd.h>
+   2          
+   3          void Lcd_Delay1ms(uint c)
+   4          {
+   5   1              uchar a,b;
+   6   1              for(;c>0;c--)
+   7   1              {
+   8   2                      for(b=199;b>0;b--)
+   9   2                      {
+  10   3                              for(a=1;a>0;a--);
+  11   3                      }
+  12   2              }
+  13   1      }
+  14          
+  15          void LcdWriteCom(uchar com)
+  16          {
+  17   1              LCD_E = 0;
+  18   1              LCD_RS = 0;
+  19   1              LCD_RW = 0;
+  20   1      
+  21   1              LCD_DATAPINS = com;
+  22   1              Lcd_Delay1ms(1);
+  23   1      
+  24   1              LCD_E = 1;
+  25   1              Lcd_Delay1ms(5);
+  26   1              LCD_E = 0;
+  27   1      }
+  28          
+  29          void LcdWriteData(uchar dat)
+  30          {
+  31   1              LCD_E = 0;
+  32   1              LCD_RS = 1;
+  33   1              LCD_RW = 0;
+  34   1      
+  35   1              LCD_DATAPINS = dat;
+  36   1              Lcd_Delay1ms(1);
+  37   1      
+  38   1              LCD_E = 1;
+  39   1              Lcd_Delay1ms(5);
+  40   1              LCD_E = 0;
+  41   1      }
+  42          
+  43          void LcdInit()
+  44          {
+  45   1              LcdWriteCom(0x38);
+  46   1              LcdWriteCom(0x0d); //光标所在位置的字符闪烁
+  47   1              LcdWriteCom(0x06);
+  48   1              LcdWriteCom(0x01);
+  49   1              LcdWriteCom(0x80);
+  50   1      }
+  51          
+  52          uchar ones,tens;
+  53          uchar data1[2][3]={50,60,0,0,0,0};//速度 占空 占空 小时 分钟 定时开关
+  54          uchar line1[5]={"speed"};
+  55          uchar line2[10]={"duty cycle"};
+C51 COMPILER V9.01   LCD                                                                   05/11/2018 23:51:21 PAGE 2   
+
+  56          uchar line3[14]={"timeset   h  m"};
+  57          uchar line4[]={"close open "};
+  58          uchar ascii[10]={0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39};
+  59          uchar next[2][3]={0x87,0xcb,0xcd,0x89,0x8c,0xc0};
+  60          uchar sit[]={0,0};
+  61          uchar key_status[]={0,1,1,1,1,1,1};//按键状态
+  62          
+  63          void delayms(uint xms)
+  64          {
+  65   1              uint i,j;
+  66   1              for(i=xms;i>0;i--)
+  67   1                      for(j=110;j>0;j--);
+  68   1      }
+  69          
+  70          void cursor_move(uchar direction,uchar s)//光标移动
+  71          {
+  72   1              switch(direction)
+  73   1              {
+  74   2                      case 1:
+  75   2                              sit[s]++;
+  76   2                              sit[s]=sit[s]%3;
+  77   2                              LcdWriteCom(next[s][sit[s]]);   
+  78   2                              break;
+  79   2                      case 2:
+  80   2                              sit[s]+=3;
+  81   2                              sit[s]--;
+  82   2                              sit[s]%=3;
+  83   2                              LcdWriteCom(next[s][sit[s]]);
+  84   2                              break;
+  85   2              }
+  86   1      }
+  87          
+  88          void display_line()//把要显示的东西先显示到屏幕上
+  89          {
+  90   1              uchar i;
+  91   1              LcdWriteCom(0x80);
+  92   1              delayms(1);
+  93   1              for(i=0;i<5;i++)
+  94   1              {       
+  95   2                      LcdWriteData(line1[i]);
+  96   2              }
+  97   1              LcdWriteCom(0xc0);
+  98   1              for(i=0;i<10;i++)
+  99   1              {
+ 100   2                      LcdWriteData(line2[i]);
+ 101   2              }
+ 102   1              LcdWriteCom(0xcc);
+ 103   1              LcdWriteData('/');
+ 104   1              LcdWriteCom(0x85);
+ 105   1      }
+ 106          
+ 107          void display_line2()//将定时功能开启时的东西显示到屏幕上
+ 108          {
+ 109   1              uchar i;
+ 110   1              LcdWriteCom(0x80);
+ 111   1              delayms(1);
+ 112   1              for(i=0;i<14;i++)
+ 113   1              {
+ 114   2                      LcdWriteData(line3[i]);
+ 115   2              }
+ 116   1      }
+ 117          
+C51 COMPILER V9.01   LCD                                                                   05/11/2018 23:51:21 PAGE 3   
+
+ 118          void display_time(uchar dat1,uchar dat2)//显示时间
+ 119          {
+ 120   1              uchar i;
+ 121   1              if(dat1>24) dat1=24;
+ 122   1              if(dat2>60) dat2=60;
+ 123   1              if(dat1<0) dat1=0;
+ 124   1              if(dat2<0) dat2=0;
+ 125   1              tens = dat1/10;
+ 126   1              ones = dat1%10;
+ 127   1              LcdWriteCom(0x0c);//先关闭光标
+ 128   1              LcdWriteCom(0x88);
+ 129   1              LcdWriteData(ascii[tens]);
+ 130   1              LcdWriteData(ascii[ones]);
+ 131   1              tens = dat2/10;
+ 132   1              ones = dat2%10;
+ 133   1              LcdWriteCom(0x8b);
+ 134   1              LcdWriteData(ascii[tens]);
+ 135   1              LcdWriteData(ascii[ones]);
+ 136   1              LcdWriteCom(0xc0);
+ 137   1              if(data1[1][2]==1)//开启
+ 138   1                      for(i=6;i<=10;i++)
+ 139   1                              LcdWriteData(line4[i]);
+ 140   1              else 
+ 141   1                      for(i=0;i<5;i++)
+ 142   1                              LcdWriteData(line4[i]);
+ 143   1              LcdWriteCom(0x0d);
+ 144   1              LcdWriteCom(next[1][sit[1]]);
+ 145   1      }
+ 146          
+ 147          void display_speed(uchar dat)//显示速度
+ 148          {               
+ 149   1              if(dat>=100)
+ 150   1              {
+ 151   2                      LcdWriteCom(next[0][0]-2);
+ 152   2                      LcdWriteData(ascii[1]);
+ 153   2                      LcdWriteData(ascii[0]);
+ 154   2                      LcdWriteData(ascii[0]);
+ 155   2                      return;
+ 156   2              }
+ 157   1              tens = dat/10;
+ 158   1              ones = dat%10;
+ 159   1              if(tens==0)
+ 160   1              {
+ 161   2                      LcdWriteCom(next[0][0]-1);
+ 162   2                      LcdWriteData(ascii[ones]);
+ 163   2              }
+ 164   1              else 
+ 165   1              {
+ 166   2                      LcdWriteCom(next[0][0]-1);
+ 167   2                      LcdWriteData(ascii[tens]);
+ 168   2                      LcdWriteData(ascii[ones]);
+ 169   2              }        
+ 170   1      }
+ 171          
+ 172          void display_duty(uchar dat1,uchar dat2)//显示占空比
+ 173          {
+ 174   1              tens=dat1/10;
+ 175   1              ones=dat1%10;
+ 176   1              LcdWriteCom(next[0][1]-1);
+ 177   1              LcdWriteData(ascii[tens]);
+ 178   1              LcdWriteData(ascii[ones]);
+ 179   1              LcdWriteCom(next[0][2]);
+C51 COMPILER V9.01   LCD                                                                   05/11/2018 23:51:21 PAGE 4   
+
+ 180   1              LcdWriteData(ascii[dat2]);
+ 181   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    537    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     74    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
