@@ -174,10 +174,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>12</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>49</TopLine>
-      <CurrentLine>49</CurrentLine>
+      <TopLine>139</TopLine>
+      <CurrentLine>147</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -188,10 +188,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>28</ColumnNumber>
+      <ColumnNumber>31</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>95</TopLine>
-      <CurrentLine>126</CurrentLine>
+      <TopLine>36</TopLine>
+      <CurrentLine>55</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\lcd.c</PathWithFileName>
       <FilenameWithoutPath>lcd.c</FilenameWithoutPath>
@@ -1557,21 +1557,21 @@
       <Documents>
         <Doc>
           <Name>.\main.c</Name>
-          <ColumnNumber>12</ColumnNumber>
-          <TopLine>49</TopLine>
-          <CurrentLine>49</CurrentLine>
+          <ColumnNumber>17</ColumnNumber>
+          <TopLine>139</TopLine>
+          <CurrentLine>147</CurrentLine>
         </Doc>
         <Doc>
           <Name>LCD.H</Name>
-          <ColumnNumber>29</ColumnNumber>
+          <ColumnNumber>14</ColumnNumber>
           <TopLine>1</TopLine>
-          <CurrentLine>25</CurrentLine>
+          <CurrentLine>3</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\lcd.c</Name>
-          <ColumnNumber>28</ColumnNumber>
-          <TopLine>95</TopLine>
-          <CurrentLine>126</CurrentLine>
+          <ColumnNumber>31</ColumnNumber>
+          <TopLine>36</TopLine>
+          <CurrentLine>55</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
